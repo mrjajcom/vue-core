@@ -1,1 +1,3 @@
-# Vue Core Module
+# Core Module for VueJS
+
+
