@@ -1,54 +1,19 @@
-import {Urls} from "./Urls";
-import Trans from "./Trans";
-import {version} from '../../package.json';
-import {Hooks} from "@/tools/Hooks";
-import {Messages} from "@/tools/Messages";
+import {version} from '@/../package.json';
+import {Configs} from "@/core/tools/Configs";
 
 
 /**
  * App
  * Used for set and get configs.
- * @constructor
  */
 export function App() {
 }
 
 /**
- * All configs
+ * App configs
  * @type {{}}
  */
-App.data = {
-  // ...
-}
-
-/**
- * Default request configs
- * @type {{request: {name: string}, urls: {base_url: string}}}
- */
-App.default_configs = {
-  app: {
-    name: 'My Application',
-  },
-
-  urls: {
-    base_url: '...'
-  }
-}
-
-/**
- * Init tools
- * @param app {createApp}
- * @param configs {{request?: *, urls?: *}}
- */
-App.init = function (app, configs) {
-  const options = {...this.default_configs, ...configs};
-  this.data = options?.app;
-
-  // Init tools
-  Urls.init(app, options?.urls)
-  Trans.init(app, options?.trans)
-  Hooks.init(app, options?.hooks)
-}
+App._data = {}
 
 /**
  * Set configs
@@ -56,7 +21,7 @@ App.init = function (app, configs) {
  * @param data
  */
 App.set = function (key, data) {
-  this.data[key] = data;
+  this._data[key] = data;
 }
 
 
@@ -66,7 +31,14 @@ App.set = function (key, data) {
  * @return *
  */
 App.get = function (key) {
-  return this.data[key];
+  try {
+    let data = Configs.data?.app
+    data = {...data, ...this._data}
+    return data[key];
+  } catch (e) {
+    console.log(e);
+    return null;
+  }
 }
 
 /**

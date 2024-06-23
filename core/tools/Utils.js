@@ -98,8 +98,9 @@ Utils.arrayPush = function (array1, array2) {
  * @returns {boolean}
  * @param data
  */
-Utils.isObject = function (data) {
+Utils.isObject = function (data, check_length = true) {
   try {
+    if (!check_length) return typeof data === "object";
     return typeof data === "object" && Object.keys(data)?.length !== 0
   } catch (e) {
     return false;
@@ -126,7 +127,7 @@ Utils.isString = function (data) {
 Utils.isDev = function () {
   try {
     const host = window.location.hostname;
-    return ['rev50.loc', 'localhost'].includes(host)
+    return ['rev50.loc', 'localhost'].includes(host) || window.location.hostname?.indexOf('localhost') !== -1
   } catch (e) {
     return false;
   }
@@ -264,7 +265,6 @@ Utils.getFileExtension = function (path) {
   return path.split(".").pop();
 }
 
-
 /**
  * Log if is Development mode
  */
@@ -285,7 +285,6 @@ Utils.uniqueId = function () {
   return dateString + randomness;
 }
 
-
 /**
  * Has property
  */
@@ -305,7 +304,138 @@ Utils.getColor = function (string) {
     if (string === 'published') return 'success';
     if (string === 'draft') return 'grey';
     if (string === 'archived') return 'red';
+    if (string === 'template') return 'blue';
   } catch (e) {
     console.log(e);
   }
+}
+
+/**
+ * Convert string to object
+ * @return {*}
+ */
+Utils.toObject = function (string) {
+  try {
+    if (typeof string === 'object') return string;
+    return JSON.parse(string)
+  } catch (e) {
+    return null;
+  }
+}
+
+/**
+ * Sort compare method
+ *
+ * @return {{}|null}
+ */
+Utils.sortCompare = function (a, b, column = 'sort') {
+  try {
+    if (parseInt(a?.[column]) < parseInt(b?.[column])) {
+      return -1;
+    }
+    if (parseInt(a?.[column]) > parseInt(b?.[column])) {
+      return 1;
+    }
+    return 0;
+  } catch (e) {
+
+    return 0
+  }
+}
+
+/**
+ * Capitalize string
+ * @param string
+ * @return {*|string}
+ */
+Utils.capitalize = function (string) {
+  try {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  } catch (e) {
+    return string;
+  }
+}
+
+/**
+ * Covert string to key structure
+ * @param string
+ */
+Utils.toKey = function (string) {
+  try {
+    return string?.toString()?.trim()?.replaceAll(' ', '')?.toLowerCase()
+  } catch (e) {
+    Utils.devLog(e)
+    return string;
+  }
+}
+
+/**
+ * Set cross subdomain cookie
+ * @param name
+ * @param value
+ * @param seconds
+ */
+Utils.setCookie = function (name, value, seconds) {
+  try {
+    const assign = name + "=" + value + ";";
+    const d = new Date();
+    d.setTime(d.getTime() + (seconds * 1000));
+    const expires = "expires=" + d.toUTCString() + ";";
+    const path = "path=/;";
+    const domain = "domain=" + (Utils.rootDomain(window.location.hostname)) + ";";
+    document.cookie = assign + expires + path + domain + 'SameSite=Strict;Secure;';
+    console.error(Utils.getCookie('token'))
+  } catch (e) {
+    Utils.devLog(e)
+    return null;
+  }
+}
+
+/**
+ * Get cookie
+ * @param name
+ */
+Utils.getCookie = function (name) {
+  try {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+  } catch (e) {
+    Utils.devLog(e)
+    return null;
+  }
+}
+
+/**
+ * Root domain
+ * @param hostname
+ * @return {*}
+ */
+Utils.rootDomain = function (hostname) {
+  let parts = hostname.split(".");
+  if (parts.length <= 2)
+    return hostname;
+
+  parts = parts.slice(-3);
+  if (['co', 'com'].indexOf(parts[1]) > -1)
+    return parts.join('.');
+
+  return parts.slice(-2).join('.');
+}
+
+/**
+ * Delete cookie
+ * @param name
+ */
+Utils.deleteCookie = function (name) {
+  document.cookie = name + '=; Max-Age=-99999999;';
+}
+
+/**
+ * Clone and duplicate object
+ * @param object
+ * @return {any}
+ */
+Utils.cloneObject = function (object) {
+  return Object.assign({}, object);
 }

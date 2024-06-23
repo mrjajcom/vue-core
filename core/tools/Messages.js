@@ -1,4 +1,4 @@
-import {Utils} from "@/tools/Utils";
+import {Utils} from "./Utils";
 
 const messages = {}
 
@@ -13,7 +13,7 @@ export function Messages() {
 /**
  * Add message
  * @param text
- * @param options {{color, btnColor,}}
+ * @param options {{color, btnColor, timeout, time}}
  */
 Messages.show = function (text, options = {}) {
   try {

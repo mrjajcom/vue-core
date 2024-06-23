@@ -1,4 +1,5 @@
 import storage from "./Storage";
+import {Utils} from "@/core/tools/Utils";
 
 /**
  *  Auth Class
@@ -29,10 +30,13 @@ Auth.setUser = function (value) {
 
 /**
  * Get current user info from local storage
+ * @param map {function}
  * @returns {*}
  */
-Auth.getUser = function () {
-  return storage.get(this.storage_keys.USER)
+Auth.getUser = function (map = null) {
+  const result = storage.get(this.storage_keys.USER)
+  if (!Utils.isFunction(map)) return result;
+  return map(result);
 }
 
 /**

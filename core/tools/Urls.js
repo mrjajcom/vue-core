@@ -1,4 +1,5 @@
 import {Utils} from "./Utils";
+import {Configs} from "@/core/tools/Configs";
 
 /**
  * Urls Class
@@ -9,22 +10,17 @@ export function Urls() {
 }
 
 /**
- * Api and urls data
- * @type {{}}
+ * Get urls config
+ * @return {*|null}
  */
-Urls.data = {
-  // dev_api_base_url: '...',
-  // api_base_url: '...',
-  // ...
-}
-
-/**
- * Init urls data
- * @param app
- * @param data
- */
-Urls.init = function (app, data) {
-  this.data = data;
+Urls.getConfig = function (key = null) {
+  try {
+    if (!key) return Configs.get('urls')
+    return Configs.get('urls')?.[key]
+  } catch (e) {
+    Utils.devLog(e)
+    return null;
+  }
 }
 
 /**
@@ -33,22 +29,23 @@ Urls.init = function (app, data) {
  * @param parameters
  * @returns {*}
  */
-Urls.api = function (api_key, parameters = []) {
+Urls.api = function (api_key = null, parameters = []) {
 
-  const dev_base_url = this.data['dev_api_base_url'];
-  const base = Utils.isDev() && dev_base_url ? dev_base_url : this.data['api_base_url'];
+  const dev_base_url = Urls.getConfig('dev_api_base_url');
+  const base = Utils.isDev() && dev_base_url ? dev_base_url : Urls.getConfig('api_base_url');
 
   if (!api_key) return base;
-  return base + this.get(api_key, parameters);
+  if (!Urls.getConfig(api_key)) return null;
+  return base + this.url(api_key, parameters);
 }
 
 /**
  * Get url without base url
  */
-Urls.get = function (key, parameters = []) {
+Urls.url = function (key, parameters = []) {
   try {
     if (!Array.isArray(parameters)) parameters = [];
-    let url = this.data[key];
+    let url = Urls.getConfig(key);
     if (parameters.length !== 0) url = Utils.setStringParameters(url, parameters);
     return url ?? '';
   } catch (e) {

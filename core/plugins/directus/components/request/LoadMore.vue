@@ -10,8 +10,8 @@
 </template>
 
 <script>
-import {Directus} from "../../tools/Directus";
-import Trans from "../../tools/Trans";
+import {Directus} from "../../../../tools/Directus";
+import Trans from "../../../../tools/Trans";
 
 export default {
   name: 'LoadMore',

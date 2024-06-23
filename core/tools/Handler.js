@@ -1,4 +1,4 @@
-import {Messages} from "@/tools/Messages";
+import {Messages} from "./Messages";
 
 /**
  *  Handler
@@ -20,18 +20,6 @@ Handler.counter = 0;
  */
 Handler.error = function (result) {
   try {
-    /*// token expired error
-    if (result.response.status === 403) {
-      if (auth.isLogin()) {
-        if (3 < this.counter) {
-          this.counter = 0;
-          auth.removeToken();
-          window.location.reload();
-          return result;
-        }
-        this.counter++;
-      }
-    }*/
     const error = result?.errors?.[0].message;
     Messages.error(error);
     return result;
@@ -42,7 +30,7 @@ Handler.error = function (result) {
 
 /*
 
-import auth from "./Auth";
+import account from "./Auth";
 import messages from "./Messages";
 
 const handler = {
